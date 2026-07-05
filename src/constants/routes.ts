@@ -1,4 +1,7 @@
 export const Routes = {
+  // Splash
+  Splash: 'Splash',
+
   // Auth
   Login: 'Login',
   Register: 'Register',
@@ -6,6 +9,7 @@ export const Routes = {
 
   // Main tabs
   Home: 'Home',
+  Dashboard: 'Dashboard',
   Campaigns: 'Campaigns',
   Content: 'Content',
   Analytics: 'Analytics',

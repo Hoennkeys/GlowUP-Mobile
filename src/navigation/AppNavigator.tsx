@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Routes } from '../constants';
-import { HomeScreen } from '../screens';
+import { HomeScreen, DashboardScreen } from '../screens';
 import { tokens } from '../theme/tokens';
 
 const Tab = createBottomTabNavigator();
@@ -31,6 +31,11 @@ export function AppNavigator() {
         name={Routes.Home}
         component={HomeScreen}
         options={{ tabBarLabel: 'Home' }}
+      />
+      <Tab.Screen
+        name={Routes.Dashboard}
+        component={DashboardScreen}
+        options={{ tabBarLabel: 'Dashboard' }}
       />
       <Tab.Screen
         name={Routes.Campaigns}
