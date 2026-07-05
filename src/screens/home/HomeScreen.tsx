@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   Animated,
   FlatList,
@@ -47,7 +47,7 @@ function AnimatedCard({
   }, [index, opacity, translateY]);
 
   return (
-    <Animated.View style={{ opacity, transform: [{ translateY }], flex: 1 }}>
+    <Animated.View style={[styles.animatedCard, { opacity, transform: [{ translateY }] }]}>
       {children}
     </Animated.View>
   );
@@ -192,5 +192,8 @@ const styles = StyleSheet.create({
   },
   gridCard: {
     marginBottom: tokens.spacing.sm,
+  },
+  animatedCard: {
+    flex: 1,
   },
 });
