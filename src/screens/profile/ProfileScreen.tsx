@@ -198,12 +198,14 @@ const sectionStyles = StyleSheet.create({
 
 function PerfilTab({
   onEdit,
+  onChangePassword,
   onLogout,
-  bio,
+  _bio,
 }: {
   onEdit: () => void;
+  onChangePassword: () => void;
   onLogout: () => void;
-  bio?: string;
+  _bio?: string;
 }) {
   return (
     <>
@@ -223,7 +225,7 @@ function PerfilTab({
         <View style={tabContent.separator} />
 
         <TouchableOpacity style={tabContent.menuRow} activeOpacity={0.7}
-          onPress={() => Alert.alert('Alterar Senha', 'Em breve.')}>
+          onPress={onChangePassword}>
           <View style={[tabContent.menuIcon, { backgroundColor: '#F59E0B18' }]}>
             <Text style={[tabContent.menuIconText, { color: '#F59E0B' }]}>🔑</Text>
           </View>
@@ -522,6 +524,7 @@ export function ProfileScreen({ navigation }: Props) {
           <PerfilTab
             bio={user?.bio}
             onEdit={() => navigation.navigate(Routes.EditProfile)}
+            onChangePassword={() => navigation.navigate(Routes.ChangePassword)}
             onLogout={handleLogout}
           />
         )}

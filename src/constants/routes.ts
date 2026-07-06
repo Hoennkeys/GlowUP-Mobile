@@ -21,6 +21,7 @@ export const Routes = {
   Notifications: 'Notifications',
   Settings: 'Settings',
   EditProfile: 'EditProfile',
+  ChangePassword: 'ChangePassword',
 } as const;
 
 export type RouteName = (typeof Routes)[keyof typeof Routes];
