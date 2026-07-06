@@ -32,3 +32,18 @@ export async function getSession() {
   if (error) throw error;
   return data.session;
 }
+
+export async function changePassword(email: string, currentPassword: string, newPassword: string) {
+  const { error: signInError } = await supabase.auth.signInWithPassword({
+    email,
+    password: currentPassword,
+  });
+  if (signInError) {
+    throw new Error('A senha atual está incorreta.');
+  }
+
+  const { error: updateError } = await supabase.auth.updateUser({
+    password: newPassword,
+  });
+  if (updateError) throw updateError;
+}

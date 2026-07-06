@@ -13,4 +13,6 @@ export type AuthStackParamList = {
 export type ProfileStackParamList = {
   Profile: undefined;
   EditProfile: undefined;
+  ChangePassword: undefined;
+  ChooseLanguage: undefined;
 };
