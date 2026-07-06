@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Routes } from '../constants';
 import { HomeScreen, DashboardScreen } from '../screens';
+import { ProfileScreen } from '../screens/profile/ProfileScreen';
 import { tokens } from '../theme/tokens';
 
 export type TabParamList = {
@@ -23,7 +24,6 @@ function StubScreen({ title }: { title: string }) {
 }
 
 const CampaignsStub = () => <StubScreen title="Campanhas" />;
-const ProfileStub = () => <StubScreen title="Perfil" />;
 
 export function AppNavigator() {
   return (
@@ -55,7 +55,7 @@ export function AppNavigator() {
       />
       <Tab.Screen
         name={Routes.Profile}
-        component={ProfileStub}
+        component={ProfileScreen}
         options={{ tabBarLabel: 'Perfil' }}
       />
     </Tab.Navigator>
