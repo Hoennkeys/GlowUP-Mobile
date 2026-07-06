@@ -52,6 +52,9 @@ react {
 
     /* Autolinking */
     autolinkLibrariesWithApp()
+
+    // Inclui o bundle JS no APK de debug (fallback se o Metro não conectar via USB/Wi-Fi).
+    debuggableVariants = []
 }
 
 /**
@@ -86,6 +89,12 @@ android {
         versionName "1.0"
         testBuildType System.getProperty('testBuildType', 'debug')
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        externalNativeBuild {
+            cmake {
+                arguments "-DANDROID_LD=lld"
+            }
+        }
     }
     signingConfigs {
         debug {
