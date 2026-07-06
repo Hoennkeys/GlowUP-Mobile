@@ -5,7 +5,14 @@ import { Routes } from '../constants';
 import { HomeScreen, DashboardScreen } from '../screens';
 import { tokens } from '../theme/tokens';
 
-const Tab = createBottomTabNavigator();
+export type TabParamList = {
+  [Routes.Home]: undefined;
+  [Routes.Dashboard]: undefined;
+  [Routes.Campaigns]: undefined;
+  [Routes.Profile]: undefined;
+};
+
+const Tab = createBottomTabNavigator<TabParamList>();
 
 function StubScreen({ title }: { title: string }) {
   return (
@@ -14,6 +21,9 @@ function StubScreen({ title }: { title: string }) {
     </View>
   );
 }
+
+const CampaignsStub = () => <StubScreen title="Campanhas" />;
+const ProfileStub = () => <StubScreen title="Perfil" />;
 
 export function AppNavigator() {
   return (
@@ -24,6 +34,7 @@ export function AppNavigator() {
         tabBarInactiveTintColor: tokens.colors.muted,
         tabBarStyle: {
           borderTopColor: tokens.colors.border,
+          backgroundColor: tokens.colors.bg,
           paddingTop: 4,
         },
       }}>
@@ -39,17 +50,18 @@ export function AppNavigator() {
       />
       <Tab.Screen
         name={Routes.Campaigns}
-        children={() => <StubScreen title="Campanhas" />}
+        component={CampaignsStub}
         options={{ tabBarLabel: 'Campanhas' }}
       />
       <Tab.Screen
         name={Routes.Profile}
-        children={() => <StubScreen title="Perfil" />}
+        component={ProfileStub}
         options={{ tabBarLabel: 'Perfil' }}
       />
     </Tab.Navigator>
   );
 }
+
 
 const styles = StyleSheet.create({
   stub: {

@@ -5,7 +5,7 @@ import { tokens } from '../../theme/tokens';
 
 export function DashboardScreen() {
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.content}>
         <Text style={styles.title}>Dashboard</Text>
         <Text style={styles.subtitle}>Bem-vindo ao seu painel de controle</Text>
