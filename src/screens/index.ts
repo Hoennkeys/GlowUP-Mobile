@@ -4,6 +4,7 @@ export { DashboardScreen } from './dashboard/DashboardScreen';
 export { ProfileScreen } from './profile/ProfileScreen';
 export { EditProfileScreen } from './profile/EditProfileScreen';
 export { ChangePasswordScreen } from './profile/ChangePasswordScreen';
+export { ChooseLanguageScreen } from './profile/ChooseLanguageScreen';
 export { LoginScreen } from './auth/LoginScreen';
 export { RegisterScreen } from './auth/RegisterScreen';
 export { ForgotPasswordScreen } from './auth/ForgotPasswordScreen';

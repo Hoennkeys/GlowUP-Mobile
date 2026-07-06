@@ -16,6 +16,7 @@ import { Avatar } from '../../components/ui/Avatar';
 import { Routes } from '../../constants';
 import { tokens } from '../../theme/tokens';
 import type { ProfileStackParamList } from '../../navigation/types';
+import { useTranslation, LANGUAGES } from '../../i18n/LanguageContext';
 
 type Props = NativeStackScreenProps<ProfileStackParamList, 'Profile'>;
 
@@ -199,25 +200,30 @@ const sectionStyles = StyleSheet.create({
 function PerfilTab({
   onEdit,
   onChangePassword,
+  onChangeLanguage,
   onLogout,
-  _bio,
+  bio: _bio,
 }: {
   onEdit: () => void;
   onChangePassword: () => void;
+  onChangeLanguage: () => void;
   onLogout: () => void;
-  _bio?: string;
+  bio?: string;
 }) {
+  const { t, language } = useTranslation();
+  const currentLanguageLabel = LANGUAGES.find(l => l.code === language)?.label || 'Português (BR)';
+
   return (
     <>
-      <SectionHeader title="Conta" />
+      <SectionHeader title={t('account')} />
       <View style={tabContent.card}>
         <TouchableOpacity style={tabContent.menuRow} onPress={onEdit} activeOpacity={0.7}>
           <View style={[tabContent.menuIcon, { backgroundColor: tokens.colors.primary + '15' }]}>
             <Text style={[tabContent.menuIconText, { color: tokens.colors.primary }]}>✎</Text>
           </View>
           <View style={tabContent.menuInfo}>
-            <Text style={tabContent.menuLabel}>Editar Perfil</Text>
-            <Text style={tabContent.menuDesc}>Nome, bio e foto</Text>
+            <Text style={tabContent.menuLabel}>{t('edit_profile')}</Text>
+            <Text style={tabContent.menuDesc}>{t('edit_profile_desc')}</Text>
           </View>
           <Text style={tabContent.chevron}>›</Text>
         </TouchableOpacity>
@@ -230,8 +236,8 @@ function PerfilTab({
             <Text style={[tabContent.menuIconText, { color: '#F59E0B' }]}>🔑</Text>
           </View>
           <View style={tabContent.menuInfo}>
-            <Text style={tabContent.menuLabel}>Alterar Senha</Text>
-            <Text style={tabContent.menuDesc}>Segurança da conta</Text>
+            <Text style={tabContent.menuLabel}>{t('change_password')}</Text>
+            <Text style={tabContent.menuDesc}>{t('change_password_desc')}</Text>
           </View>
           <Text style={tabContent.chevron}>›</Text>
         </TouchableOpacity>
@@ -244,8 +250,8 @@ function PerfilTab({
             <Text style={[tabContent.menuIconText, { color: '#5865F2' }]}>🔔</Text>
           </View>
           <View style={tabContent.menuInfo}>
-            <Text style={tabContent.menuLabel}>Notificações</Text>
-            <Text style={tabContent.menuDesc}>Preferências de alerta</Text>
+            <Text style={tabContent.menuLabel}>{t('notifications')}</Text>
+            <Text style={tabContent.menuDesc}>{t('notifications_desc')}</Text>
           </View>
           <Text style={tabContent.chevron}>›</Text>
         </TouchableOpacity>
@@ -253,27 +259,27 @@ function PerfilTab({
         <View style={tabContent.separator} />
 
         <TouchableOpacity style={tabContent.menuRow} activeOpacity={0.7}
-          onPress={() => Alert.alert('Idioma', 'Em breve.')}>
+          onPress={onChangeLanguage}>
           <View style={[tabContent.menuIcon, { backgroundColor: '#10B98118' }]}>
             <Text style={[tabContent.menuIconText, { color: '#10B981' }]}>🌐</Text>
           </View>
           <View style={tabContent.menuInfo}>
-            <Text style={tabContent.menuLabel}>Idioma</Text>
-            <Text style={tabContent.menuDesc}>Português (BR)</Text>
+            <Text style={tabContent.menuLabel}>{t('language')}</Text>
+            <Text style={tabContent.menuDesc}>{currentLanguageLabel}</Text>
           </View>
           <Text style={tabContent.chevron}>›</Text>
         </TouchableOpacity>
       </View>
 
-      <SectionHeader title="Sessão" />
+      <SectionHeader title={t('session')} />
       <View style={tabContent.card}>
         <TouchableOpacity style={[tabContent.menuRow, tabContent.dangerRow]} onPress={onLogout} activeOpacity={0.7}>
           <View style={[tabContent.menuIcon, { backgroundColor: tokens.colors.error + '15' }]}>
             <Text style={[tabContent.menuIconText, { color: tokens.colors.error }]}>↩</Text>
           </View>
           <View style={tabContent.menuInfo}>
-            <Text style={[tabContent.menuLabel, { color: tokens.colors.error }]}>Sair da conta</Text>
-            <Text style={tabContent.menuDesc}>Encerrar sessão atual</Text>
+            <Text style={[tabContent.menuLabel, { color: tokens.colors.error }]}>{t('logout')}</Text>
+            <Text style={tabContent.menuDesc}>{t('logout_desc')}</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -525,6 +531,7 @@ export function ProfileScreen({ navigation }: Props) {
             bio={user?.bio}
             onEdit={() => navigation.navigate(Routes.EditProfile)}
             onChangePassword={() => navigation.navigate(Routes.ChangePassword)}
+            onChangeLanguage={() => navigation.navigate(Routes.ChooseLanguage)}
             onLogout={handleLogout}
           />
         )}

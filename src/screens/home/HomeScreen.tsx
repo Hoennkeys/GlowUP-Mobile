@@ -12,6 +12,7 @@ import { useAuth } from '../../app/AuthProvider';
 import { Avatar, MetricPill, RoundedCard } from '../../components/ui';
 import { tokens } from '../../theme/tokens';
 import type { Campaign } from '../../types';
+import { useTranslation } from '../../i18n/LanguageContext';
 import {
   mockCampaigns,
   mockFeaturedCampaigns,
@@ -59,6 +60,7 @@ function getCoverColor(campaign: Campaign): string {
 
 export function HomeScreen() {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const firstName = (user?.name ?? 'você').split(' ')[0];
 
   const renderCampaignCard = (campaign: Campaign, index: number, compact = false) => (
@@ -83,8 +85,8 @@ export function HomeScreen() {
         contentContainerStyle={styles.scrollContent}>
         <View style={styles.header}>
           <View style={styles.headerText}>
-            <Text style={styles.greeting}>Olá, {firstName}</Text>
-            <Text style={styles.subtitle}>Suas campanhas de hoje</Text>
+            <Text style={styles.greeting}>{t('greeting')}, {firstName}</Text>
+            <Text style={styles.subtitle}>{t('today_campaigns')}</Text>
           </View>
           <Avatar
             testID="home-avatar"
@@ -101,7 +103,7 @@ export function HomeScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Em destaque</Text>
+          <Text style={styles.sectionTitle}>{t('featured')}</Text>
           <FlatList
             horizontal
             data={mockFeaturedCampaigns}
@@ -113,7 +115,7 @@ export function HomeScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Campanhas recentes</Text>
+          <Text style={styles.sectionTitle}>{t('recent_campaigns')}</Text>
           <FlatList
             data={mockCampaigns}
             keyExtractor={item => item.id}

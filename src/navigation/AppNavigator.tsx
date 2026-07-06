@@ -8,6 +8,7 @@ import { HomeScreen, DashboardScreen } from '../screens';
 import { ProfileScreen } from '../screens/profile/ProfileScreen';
 import { EditProfileScreen } from '../screens/profile/EditProfileScreen';
 import { ChangePasswordScreen } from '../screens/profile/ChangePasswordScreen';
+import { ChooseLanguageScreen } from '../screens/profile/ChooseLanguageScreen';
 import { LoginScreen } from '../screens/auth/LoginScreen';
 import { RegisterScreen } from '../screens/auth/RegisterScreen';
 import { ForgotPasswordScreen } from '../screens/auth/ForgotPasswordScreen';
@@ -52,6 +53,7 @@ function ProfileStackNavigator() {
       <ProfileStack.Screen name={Routes.Profile} component={ProfileScreen} />
       <ProfileStack.Screen name={Routes.EditProfile} component={EditProfileScreen} />
       <ProfileStack.Screen name={Routes.ChangePassword} component={ChangePasswordScreen} />
+      <ProfileStack.Screen name={Routes.ChooseLanguage} component={ChooseLanguageScreen} />
     </ProfileStack.Navigator>
   );
 }
