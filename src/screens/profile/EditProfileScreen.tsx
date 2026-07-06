@@ -1,18 +1,27 @@
 import React, { useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
+  View,
+  PermissionsAndroid,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import {
+  launchCamera,
+  launchImageLibrary,
+} from 'react-native-image-picker';
 import { useAuth } from '../../app/AuthProvider';
 import { ActionButton } from '../../components/ui/ActionButton';
+import { Avatar } from '../../components/ui/Avatar';
 import { FormInput } from '../../components/ui/FormInput';
+import { uploadAvatar } from '../../services/profileService';
 import { tokens } from '../../theme/tokens';
 import type { ProfileStackParamList } from '../../navigation/types';
 
@@ -23,7 +32,9 @@ export function EditProfileScreen({ navigation }: Props) {
 
   const [name, setName] = useState(user?.name ?? '');
   const [bio, setBio] = useState(user?.bio ?? '');
+  const [avatarUri, setAvatarUri] = useState<string | undefined>(user?.avatarUrl);
   const [nameError, setNameError] = useState('');
+  const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   function validate(): boolean {
@@ -35,12 +46,95 @@ export function EditProfileScreen({ navigation }: Props) {
     return true;
   }
 
+  function handlePickPhoto() {
+    Alert.alert('Foto de perfil', 'Escolha uma opção', [
+      {
+        text: 'Câmera',
+        onPress: () => openCamera(),
+      },
+      {
+        text: 'Galeria',
+        onPress: () => openGallery(),
+      },
+      {
+        text: 'Cancelar',
+        style: 'cancel',
+      },
+    ]);
+  }
+
+  async function openGallery() {
+    const result = await launchImageLibrary({
+      mediaType: 'photo',
+      quality: 0.8,
+      selectionLimit: 1,
+      includeBase64: true,
+    });
+    const asset = result.assets?.[0];
+    if (asset?.base64 && asset?.uri) {
+      await handleUpload(asset.base64, asset.uri);
+    }
+  }
+
+  async function openCamera() {
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CAMERA,
+          {
+            title: 'Permissão de Câmera',
+            message: 'O aplicativo precisa de permissão para usar a câmera e tirar fotos de perfil.',
+            buttonNeutral: 'Perguntar depois',
+            buttonNegative: 'Cancelar',
+            buttonPositive: 'OK',
+          }
+        );
+        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+          Alert.alert('Permissão negada', 'A permissão de câmera é necessária para tirar uma foto.');
+          return;
+        }
+      } catch (err) {
+        console.warn(err);
+        return;
+      }
+    }
+
+    const result = await launchCamera({
+      mediaType: 'photo',
+      quality: 0.8,
+      saveToPhotos: false,
+      includeBase64: true,
+    });
+    const asset = result.assets?.[0];
+    if (asset?.base64 && asset?.uri) {
+      await handleUpload(asset.base64, asset.uri);
+    }
+  }
+
+  async function handleUpload(base64: string, localUri: string) {
+    if (!user) return;
+    setUploading(true);
+    try {
+      const publicUrl = await uploadAvatar(user.id, base64, localUri);
+      setAvatarUri(publicUrl);
+    } catch (e: any) {
+      console.error('Upload error detail:', e);
+      Alert.alert('Erro', `Não foi possível fazer o upload da foto. Detalhes: ${e?.message || JSON.stringify(e)}`);
+    } finally {
+      setUploading(false);
+    }
+  }
+
   async function handleSave() {
     clearError();
     if (!validate()) return;
     setSubmitting(true);
     try {
-      await updateProfile({ name: name.trim(), bio: bio.trim() });
+      await updateProfile({
+        name: name.trim(),
+        bio: bio.trim(),
+        avatarUrl: avatarUri,
+      });
       navigation.goBack();
     } finally {
       setSubmitting(false);
@@ -56,11 +150,33 @@ export function EditProfileScreen({ navigation }: Props) {
           contentContainerStyle={styles.scroll}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}>
+
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.topRow}>
             <Text style={styles.back}>← Voltar</Text>
           </TouchableOpacity>
 
           <Text style={styles.title}>Editar Perfil</Text>
+
+          {/* ── Avatar picker ── */}
+          <View style={styles.avatarSection}>
+            <TouchableOpacity
+              style={styles.avatarWrapper}
+              onPress={handlePickPhoto}
+              activeOpacity={0.8}
+              disabled={uploading}>
+              <Avatar uri={avatarUri} name={name} size={100} />
+              {uploading ? (
+                <View style={styles.avatarOverlay}>
+                  <ActivityIndicator color={tokens.colors.bg} />
+                </View>
+              ) : (
+                <View style={styles.avatarBadge}>
+                  <Text style={styles.avatarBadgeText}>✎</Text>
+                </View>
+              )}
+            </TouchableOpacity>
+            <Text style={styles.avatarHint}>Toque para alterar a foto</Text>
+          </View>
 
           {error ? <Text style={styles.globalError}>{error}</Text> : null}
 
@@ -136,6 +252,50 @@ const styles = StyleSheet.create({
     color: tokens.colors.text,
     marginBottom: tokens.spacing.lg,
   },
+
+  // Avatar
+  avatarSection: {
+    alignItems: 'center',
+    marginBottom: tokens.spacing.xl,
+  },
+  avatarWrapper: {
+    position: 'relative',
+    marginBottom: tokens.spacing.sm,
+  },
+  avatarOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 50,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarBadge: {
+    position: 'absolute',
+    bottom: 2,
+    right: 2,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: tokens.colors.primary,
+    borderWidth: 2,
+    borderColor: tokens.colors.bg,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarBadgeText: {
+    color: tokens.colors.bg,
+    fontSize: 13,
+    lineHeight: 16,
+  },
+  avatarHint: {
+    ...tokens.typography.caption,
+    color: tokens.colors.muted,
+  },
+
   globalError: {
     ...tokens.typography.caption,
     color: tokens.colors.error,
