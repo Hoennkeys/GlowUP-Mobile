@@ -9,6 +9,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  PermissionsAndroid,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -67,31 +68,58 @@ export function EditProfileScreen({ navigation }: Props) {
       mediaType: 'photo',
       quality: 0.8,
       selectionLimit: 1,
+      includeBase64: true,
     });
-    if (result.assets?.[0]?.uri) {
-      await handleUpload(result.assets[0].uri);
+    const asset = result.assets?.[0];
+    if (asset?.base64 && asset?.uri) {
+      await handleUpload(asset.base64, asset.uri);
     }
   }
 
   async function openCamera() {
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CAMERA,
+          {
+            title: 'Permissão de Câmera',
+            message: 'O aplicativo precisa de permissão para usar a câmera e tirar fotos de perfil.',
+            buttonNeutral: 'Perguntar depois',
+            buttonNegative: 'Cancelar',
+            buttonPositive: 'OK',
+          }
+        );
+        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+          Alert.alert('Permissão negada', 'A permissão de câmera é necessária para tirar uma foto.');
+          return;
+        }
+      } catch (err) {
+        console.warn(err);
+        return;
+      }
+    }
+
     const result = await launchCamera({
       mediaType: 'photo',
       quality: 0.8,
       saveToPhotos: false,
+      includeBase64: true,
     });
-    if (result.assets?.[0]?.uri) {
-      await handleUpload(result.assets[0].uri);
+    const asset = result.assets?.[0];
+    if (asset?.base64 && asset?.uri) {
+      await handleUpload(asset.base64, asset.uri);
     }
   }
 
-  async function handleUpload(localUri: string) {
+  async function handleUpload(base64: string, localUri: string) {
     if (!user) return;
     setUploading(true);
     try {
-      const publicUrl = await uploadAvatar(user.id, localUri);
+      const publicUrl = await uploadAvatar(user.id, base64, localUri);
       setAvatarUri(publicUrl);
-    } catch {
-      Alert.alert('Erro', 'Não foi possível fazer o upload da foto. Tente novamente.');
+    } catch (e: any) {
+      console.error('Upload error detail:', e);
+      Alert.alert('Erro', `Não foi possível fazer o upload da foto. Detalhes: ${e?.message || JSON.stringify(e)}`);
     } finally {
       setUploading(false);
     }
