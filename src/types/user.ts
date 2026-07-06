@@ -24,3 +24,12 @@ export interface Influencer {
 }
 
 export type User = Influencer;
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  name: string;
+  avatarUrl?: string;
+  bio?: string;
+  createdAt: string;
+}

@@ -1,46 +1,72 @@
 import React from 'react';
 import {
+  ActivityIndicator,
+  ScrollView,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ActionButton } from '../../components/ui';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useAuth } from '../../app/AuthProvider';
+import { ActionButton } from '../../components/ui/ActionButton';
+import { Avatar } from '../../components/ui/Avatar';
+import { Routes } from '../../constants';
 import { tokens } from '../../theme/tokens';
+import type { ProfileStackParamList } from '../../navigation/types';
 
-export function ProfileScreen() {
+type Props = NativeStackScreenProps<ProfileStackParamList, 'Profile'>;
+
+export function ProfileScreen({ navigation }: Props) {
+  const { user, logout, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator color={tokens.colors.primary} />
+      </View>
+    );
+  }
+
+  async function handleLogout() {
+    try {
+      await logout();
+    } catch {
+      // error is surfaced via AuthContext
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Perfil</Text>
       </View>
 
-      <View style={styles.content}>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.avatarContainer}>
-          <View style={styles.avatarPlaceholder}>
-             <Text style={styles.avatarInitial}>U</Text>
-          </View>
+          <Avatar uri={user?.avatarUrl} name={user?.name} size={120} />
         </View>
 
         <View style={styles.userInfo}>
-          <Text style={styles.userName}>Nome do Usuário</Text>
-          <Text style={styles.userEmail}>email@exemplo.com</Text>
+          <Text style={styles.userName}>{user?.name ?? '—'}</Text>
+          <Text style={styles.userEmail}>{user?.email ?? '—'}</Text>
+          {user?.bio ? <Text style={styles.userBio}>{user.bio}</Text> : null}
         </View>
 
         <View style={styles.actions}>
           <ActionButton
             label="Editar Perfil"
-            onPress={() => console.log('Edit Profile')}
+            onPress={() => navigation.navigate(Routes.EditProfile)}
             variant="primary"
           />
-          <View style={{ height: 16 }} />
+          <View style={styles.divider} />
           <ActionButton
             label="Sair"
-            onPress={() => console.log('Logout')}
+            onPress={handleLogout}
             variant="secondary"
           />
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -48,6 +74,12 @@ export function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: tokens.colors.bg,
+  },
+  centered: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: tokens.colors.bg,
   },
   header: {
@@ -63,26 +95,13 @@ const styles = StyleSheet.create({
     color: tokens.colors.text,
   },
   content: {
-    flex: 1,
     alignItems: 'center',
     paddingHorizontal: tokens.spacing.lg,
     paddingTop: tokens.spacing.xl,
-    backgroundColor: tokens.colors.bg,
+    paddingBottom: tokens.spacing.xxl,
   },
   avatarContainer: {
     marginBottom: tokens.spacing.lg,
-  },
-  avatarPlaceholder: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: tokens.colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarInitial: {
-    ...tokens.typography.h1,
-    color: tokens.colors.muted,
   },
   userInfo: {
     alignItems: 'center',
@@ -97,7 +116,17 @@ const styles = StyleSheet.create({
     ...tokens.typography.body,
     color: tokens.colors.muted,
   },
+  userBio: {
+    ...tokens.typography.body,
+    color: tokens.colors.muted,
+    textAlign: 'center',
+    marginTop: tokens.spacing.sm,
+    paddingHorizontal: tokens.spacing.md,
+  },
   actions: {
     width: '100%',
+  },
+  divider: {
+    height: tokens.spacing.md,
   },
 });

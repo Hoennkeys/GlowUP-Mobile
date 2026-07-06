@@ -4,3 +4,7 @@ export { MetricPill } from './MetricPill';
 export type { MetricPillProps } from './MetricPill';
 export { ActionButton } from './ActionButton';
 export type { ActionButtonProps } from './ActionButton';
+export { Avatar } from './Avatar';
+export type { AvatarProps } from './Avatar';
+export { FormInput } from './FormInput';
+export type { FormInputProps } from './FormInput';

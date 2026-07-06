@@ -2,3 +2,7 @@ export { HomeScreen } from './home/HomeScreen';
 export { SplashScreen } from './splash/SplashScreen';
 export { DashboardScreen } from './dashboard/DashboardScreen';
 export { ProfileScreen } from './profile/ProfileScreen';
+export { EditProfileScreen } from './profile/EditProfileScreen';
+export { LoginScreen } from './auth/LoginScreen';
+export { RegisterScreen } from './auth/RegisterScreen';
+export { ForgotPasswordScreen } from './auth/ForgotPasswordScreen';
