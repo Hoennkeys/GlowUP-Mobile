@@ -90,7 +90,7 @@ export function HomeScreen() {
             testID="home-avatar"
             uri={user?.avatarUrl}
             name={user?.name}
-            size={56}
+            size={72}
           />
         </View>
 
