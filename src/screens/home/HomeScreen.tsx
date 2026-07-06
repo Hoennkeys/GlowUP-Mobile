@@ -8,14 +8,14 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MetricPill, RoundedCard } from '../../components/ui';
+import { useAuth } from '../../app/AuthProvider';
+import { Avatar, MetricPill, RoundedCard } from '../../components/ui';
 import { tokens } from '../../theme/tokens';
 import type { Campaign } from '../../types';
 import {
   mockCampaigns,
   mockFeaturedCampaigns,
   mockMetrics,
-  mockUser,
   PLACEHOLDER_COLORS,
 } from './mocks';
 
@@ -58,7 +58,8 @@ function getCoverColor(campaign: Campaign): string {
 }
 
 export function HomeScreen() {
-  const firstName = mockUser.name.split(' ')[0];
+  const { user } = useAuth();
+  const firstName = (user?.name ?? 'você').split(' ')[0];
 
   const renderCampaignCard = (campaign: Campaign, index: number, compact = false) => (
     <AnimatedCard index={index} key={campaign.id}>
@@ -85,9 +86,11 @@ export function HomeScreen() {
             <Text style={styles.greeting}>Olá, {firstName}</Text>
             <Text style={styles.subtitle}>Suas campanhas de hoje</Text>
           </View>
-          <View
+          <Avatar
             testID="home-avatar"
-            style={[styles.avatar, { backgroundColor: PLACEHOLDER_COLORS.avatar }]}
+            uri={user?.avatarUrl}
+            name={user?.name}
+            size={56}
           />
         </View>
 
@@ -153,13 +156,6 @@ const styles = StyleSheet.create({
   subtitle: {
     ...tokens.typography.body,
     color: tokens.colors.muted,
-  },
-  avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: tokens.radius.lg,
-    borderWidth: 2,
-    borderColor: tokens.colors.accent,
   },
   metricsRow: {
     flexDirection: 'row',

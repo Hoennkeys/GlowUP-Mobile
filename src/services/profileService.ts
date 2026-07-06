@@ -11,6 +11,27 @@ export async function getProfile(userId: string) {
   return data;
 }
 
+export async function uploadAvatar(userId: string, localUri: string): Promise<string> {
+  const ext = localUri.split('.').pop()?.toLowerCase() ?? 'jpg';
+  const mimeType = ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg';
+  const fileName = `${userId}/${Date.now()}.${ext}`;
+
+  const response = await fetch(localUri);
+  const blob = await response.blob();
+
+  const { data, error } = await supabase.storage
+    .from('avatars')
+    .upload(fileName, blob, { contentType: mimeType, upsert: true });
+
+  if (error) throw error;
+
+  const { data: { publicUrl } } = supabase.storage
+    .from('avatars')
+    .getPublicUrl(data.path);
+
+  return publicUrl;
+}
+
 export async function updateProfile(userId: string, payload: UpdateProfilePayload) {
   const { data, error } = await supabase
     .from('profiles')
