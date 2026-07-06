@@ -8,3 +8,6 @@ export { ChooseLanguageScreen } from './profile/ChooseLanguageScreen';
 export { LoginScreen } from './auth/LoginScreen';
 export { RegisterScreen } from './auth/RegisterScreen';
 export { ForgotPasswordScreen } from './auth/ForgotPasswordScreen';
+export { ChatsScreen } from './chats/ChatsScreen';
+export { ChatDetailsScreen } from './chats/ChatDetailsScreen';
+

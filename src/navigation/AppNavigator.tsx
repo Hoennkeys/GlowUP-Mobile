@@ -4,7 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useAuth } from '../app/AuthProvider';
 import { Routes } from '../constants';
-import { HomeScreen, DashboardScreen } from '../screens';
+import { HomeScreen, DashboardScreen, ChatsScreen, ChatDetailsScreen } from '../screens';
 import { ProfileScreen } from '../screens/profile/ProfileScreen';
 import { EditProfileScreen } from '../screens/profile/EditProfileScreen';
 import { ChangePasswordScreen } from '../screens/profile/ChangePasswordScreen';
@@ -13,13 +13,14 @@ import { LoginScreen } from '../screens/auth/LoginScreen';
 import { RegisterScreen } from '../screens/auth/RegisterScreen';
 import { ForgotPasswordScreen } from '../screens/auth/ForgotPasswordScreen';
 import { tokens } from '../theme/tokens';
-import type { AuthStackParamList, ProfileStackParamList } from './types';
+import type { AuthStackParamList, ProfileStackParamList, ChatsStackParamList } from './types';
 
 // ─── Navigators ───────────────────────────────────────────────────────────────
 
 const Tab = createBottomTabNavigator();
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
 const ProfileStack = createNativeStackNavigator<ProfileStackParamList>();
+const ChatsStack = createNativeStackNavigator<ChatsStackParamList>();
 
 // ─── Stubs ────────────────────────────────────────────────────────────────────
 
@@ -58,6 +59,17 @@ function ProfileStackNavigator() {
   );
 }
 
+// ─── Chats Stack ──────────────────────────────────────────────────────────────
+
+function ChatsStackNavigator() {
+  return (
+    <ChatsStack.Navigator screenOptions={{ headerShown: false }}>
+      <ChatsStack.Screen name={Routes.Chats} component={ChatsScreen} />
+      <ChatsStack.Screen name={Routes.ChatDetails} component={ChatDetailsScreen} />
+    </ChatsStack.Navigator>
+  );
+}
+
 // ─── Main Tabs ────────────────────────────────────────────────────────────────
 
 function MainTabNavigator() {
@@ -82,6 +94,11 @@ function MainTabNavigator() {
         name={Routes.Dashboard}
         component={DashboardScreen}
         options={{ tabBarLabel: 'Dashboard' }}
+      />
+      <Tab.Screen
+        name="ChatsTab"
+        component={ChatsStackNavigator}
+        options={{ tabBarLabel: 'Chats' }}
       />
       <Tab.Screen
         name={Routes.Campaigns}
