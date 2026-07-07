@@ -11,6 +11,7 @@ export const Routes = {
   Home: 'Home',
   Dashboard: 'Dashboard',
   Campaigns: 'Campaigns',
+  Chats: 'Chats',
   Content: 'Content',
   Analytics: 'Analytics',
   Profile: 'Profile',
@@ -23,6 +24,7 @@ export const Routes = {
   EditProfile: 'EditProfile',
   ChangePassword: 'ChangePassword',
   ChooseLanguage: 'ChooseLanguage',
+  ChatDetails: 'ChatDetails',
 } as const;
 
 export type RouteName = (typeof Routes)[keyof typeof Routes];
